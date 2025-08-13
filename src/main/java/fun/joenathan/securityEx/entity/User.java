@@ -40,6 +40,10 @@ public class User implements UserDetails {
         return this.password;
     }
 
+    public String getUserName(){
+        return this.username;
+    }
+
     @Override
     public String getUsername() {
         return this.email;
