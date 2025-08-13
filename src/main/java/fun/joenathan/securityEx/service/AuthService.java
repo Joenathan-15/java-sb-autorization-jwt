@@ -30,7 +30,11 @@ public class AuthService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private ValidatorService validatorService;
+
     public AuthenticationResponse register(RegisterRequest request) {
+        validatorService.validate(request);
         User user = new User();
         user.setEmail(request.getEmail());
         user.setUsername(request.getUsername());
@@ -41,13 +45,13 @@ public class AuthService {
     }
 
     public AuthenticationResponse login(LoginRequest request) {
+        validatorService.validate(request);
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
-
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email Or Password Incorrect"));
         String token = jwtService.generateToken(user);
         return AuthenticationResponse.builder().token(token).build();
